@@ -1,4 +1,4 @@
-Certainly! Here's an example of a README file for a News app website created using React, CSS, and Bootstrap:
+
 
 # News App Website
 
