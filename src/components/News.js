@@ -54,7 +54,7 @@ this.setState({
    {this.state.articles.map((element) => {
   return (
     <div className="col-md-4" key={element.url}>
-      <NewsItem title={element.title?element.title.slice(0,45):""} decription={element.description?element.description.slice(0,88):""} imageUrl={element.urlToImage} NewsUrl={element.url}/>
+      <NewsItem title={element.title?element.title.slice(0,45):""} description={element.description?element.description.slice(0,88):""} imageUrl={element.urlToImage} NewsUrl={element.url}/>
     </div>
   );
 })}
