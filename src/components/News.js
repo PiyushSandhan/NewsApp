@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
-
+import Navbar from './Navbar'
 function News() {
   const [articles, setArticles] = useState([]);
   // eslint-disable-next-line no-unused-vars
@@ -39,15 +39,18 @@ function News() {
   };
 
   return (
-    <div className="container my-3">
-      <h1 className="text-center">Top Headlines</h1>
-      <div className="row">
+    <>
+   <div style={{ background: "linear-gradient(to top,rgb(209, 233, 205),rgb(226, 243, 248))",flex: 1, minHeight: '100vh'}}>
+    <Navbar/>
+    <div className="container my-3"  >
+      <h1 className="text-center" style={{fontFamily:"fantasy"}}>Top Headlines</h1>
+      <div className="row" style={{marginBottom:"4%"}}>
         {articles.map((element) => {
           return (
             <div className="col-md-4" key={element.url}>
               <NewsItem
-                title={element.title ? element.title.slice(0, 45) : ""}
-                description={element.description ? element.description.slice(0, 88) : ""}
+                title={element.title ? element.title : ""}
+                description={element.description ? element.description : ""}
                 imageUrl={element.urlToImage}
                 NewsUrl={element.url}
               />
@@ -65,6 +68,7 @@ function News() {
           &larr; Previous
         </button>
         <button
+        disabled={page+1>= Math.ceil(totalResults / 9)}
           type="button"
           className="btn btn-dark"
           onClick={handleNextClick}
@@ -73,6 +77,8 @@ function News() {
         </button>
       </div>
     </div>
+  </div>
+    </>
   );
 }
 
