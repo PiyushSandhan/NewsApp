@@ -25,11 +25,11 @@ function Login() {
           password: password
         })
       });
-  
+       const data=await response.json();
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(data.message || 'Network response was not ok');
       }
-    
+      localStorage.setItem('token', data.token);
       navigate('/');
     } catch (error) {
       console.error('Error:', error);

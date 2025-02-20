@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
-const User = require('../models/user.model'); // Ensure path is correct
+const User = require('../models/user.model'); 
+const jwt = require('jsonwebtoken');
 
 const UserController = {
     async register(req, res) {
@@ -49,10 +50,16 @@ const UserController = {
         // Compare the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Password incorrect' });
+            return res.status(400).json({ message: 'Invalid phone number or password' });
         }
 
-        return res.json({ message: 'Login successful' });
+        const token=jwt.sign(
+            {username: user.username },
+            'PIYUSH',
+            { expiresIn: '1h' }
+        )
+
+        res.json({ message: 'Login successful', token });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: 'Server error' });
