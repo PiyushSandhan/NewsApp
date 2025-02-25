@@ -74,6 +74,9 @@ function Login() {
         </div>
         <button type="submit" className="btn btn-dark mx-auto" id='Button'>Submit</button>
       </form>
+      <div className="text-center">
+        <p>Don't have an account? <a href="/register">Register</a></p>
+      </div>
     </div>
     </div>
     </>

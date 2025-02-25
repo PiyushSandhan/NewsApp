@@ -44,7 +44,7 @@ function News() {
    <div style={{ background: "linear-gradient(to top,rgb(255, 255, 255),rgb(235, 240, 242))",flex: 1, minHeight: '100vh'}}>
     <Navbar/>
     <div className="container my-4"  >
-      <h1 className="text-center" style={{fontFamily:"fantasy"}}>Top Headlines</h1>
+      <h1 className="text-center" style={{fontFamily:"fantasy",fontSize:"30px"}}>Top Headlines</h1>
       <div className="row" style={{marginBottom:"4%",display:"flex",justifyContent:"space-between"}}>
         {articles.map((element) => {
           return (

@@ -8,12 +8,43 @@ function Registration() {
     const [username, setUsername] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const validateForm = () => {
+        let errorMessages = [];
+
+        // Regex patterns
+        const usernamePattern = /^[a-zA-Z0-9_]{3,}[a-zA-Z]+[0-9]*$/; // Alphanumeric with no spaces, min 3 chars
+        const phonePattern = /^\+?[1-9]\d{1,14}$/; // E.164 format
+        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // 6 to 20 chars, at least one numeric digit, one uppercase and one lowercase letter
+
+        if (!usernamePattern.test(username)) {
+            errorMessages.push("Username should be alphanumeric, start with a letter, and at least 3 characters long.");
+        }
+
+        if (!phonePattern.test(phoneNumber) && errorMessages.length === 0) {
+            errorMessages.push("Phone number should match international E.164 format.");
+        }
+
+        if (!passwordPattern.test(password) && errorMessages.length === 0) {
+            errorMessages.push("Password must be 6-20 characters long, include at least one upper, one lower case letter, and one numeric digit.");
+        }
+
+        if (errorMessages.length > 0) {
+            setErrorMessage(errorMessages.join(' '));
+            return false;
+        }
+
+        setErrorMessage('');
+        return true;
+    }
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log('Username:', username);
-        console.log('Phone Number:', phoneNumber);
-        console.log('Password:', password);
+      
+
+        if (!validateForm()) return; // Stop submission if validation fails
 
         try {
             const response = await fetch('http://localhost:4000/api/register', {
@@ -71,6 +102,7 @@ function Registration() {
                                 placeholder="Enter username"
                                 required
                             />
+                           
                         </div>
 
                         <div className="Phone">
@@ -86,6 +118,7 @@ function Registration() {
                                 placeholder="Enter phone number"
                                 required
                             />
+                           
                         </div>
 
                         <div className="Password">
@@ -101,6 +134,7 @@ function Registration() {
                                 placeholder="Enter password"
                                 required
                             />
+                             {errorMessage && <div className="alert mt-2" style={{color:"red",fontSize:"15px"}}>{errorMessage}</div>}
                         </div>
 
                         <button type="submit" className="btn btn-dark mx-auto" id="Button">

@@ -50,12 +50,12 @@ const UserController = {
         // Compare the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid phone number or password' });
+            return res.status(401).json({ message: 'Invalid phone number or password' });
         }
 
         const token=jwt.sign(
             {username: user.username },
-            'PIYUSH',
+            'PIYUSHSANDHAN',
             { expiresIn: '1h' }
         )
 
