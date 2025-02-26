@@ -60,12 +60,15 @@ function Registration() {
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const data = await response.json();
+            setErrorMessage(data.message || 'An error occurred during registration.');
+            return;
             }
 
             navigate('/login');
         } catch (error) {
             console.error('Error:', error);
+            errorMessage.push(error);
         }
     };
 
@@ -134,7 +137,11 @@ function Registration() {
                                 placeholder="Enter password"
                                 required
                             />
-                             {errorMessage && <div className="alert mt-2" style={{color:"red",fontSize:"15px"}}>{errorMessage}</div>}
+                            <div className='container'>
+                             {errorMessage && <div className="alert alert-danger mt-4" style={{color:"red",fontSize:"13px", height: '50px',
+                        width: '94%',marginLeft: '2%'}}>{errorMessage}</div>}
+                       </div>
+                             
                         </div>
 
                         <button type="submit" className="btn btn-dark mx-auto" id="Button">
