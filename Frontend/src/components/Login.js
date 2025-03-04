@@ -6,13 +6,36 @@ function Login() {
     const navigate=useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+   const [errorMessage, setErrorMessage] = useState('');
+   const validateForm = () => {
+    let errorMessages = [];
+
+    // Regex patterns
+    const phonePattern = /^\+?[1-9]\d{1,14}$/; // E.164 format
+    const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // 6 to 20 chars, at least one numeric digit, one uppercase and one lowercase letter
+
+   
+    if (!phonePattern.test(phoneNumber) && errorMessages.length === 0) {
+        errorMessages.push("Phone number should match international E.164 format.");
+    }
+
+    if (!passwordPattern.test(password) && errorMessages.length === 0) {
+        errorMessages.push("Password must be 6-20 characters long, include at least one upper, one lower case letter, and one numeric digit.");
+    }
+
+    if (errorMessages.length > 0) {
+        setErrorMessage(errorMessages.join(' '));
+        return false;
+    }
+
+    setErrorMessage('');
+    return true;
+}
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Phone Number:', phoneNumber);
-    console.log('Password:', password);
-  
     
+    if (!validateForm()) return; 
   
     try {
       const response = await fetch("http://localhost:4000/api/login", {
@@ -77,6 +100,10 @@ function Login() {
       <div className="text-center">
         <p>Don't have an account? <a href="/register">Register</a></p>
       </div>
+      <div className='container'>
+                             {errorMessage && <div className="alert alert-danger mt-4" style={{color:"red",fontSize:"13px", height: '50px',
+                        width: '94%',marginLeft: '2%'}}>{errorMessage}</div>}
+                       </div>
     </div>
     </div>
     </>

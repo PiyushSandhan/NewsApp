@@ -6,7 +6,7 @@ import Login from './components/Login';
 import Register from './components/Registration';
 import ProtectedRoute from './components/ProtectedRoute';
 
-function S() {
+function App() {
   return (
     <Router>
       <Routes>
@@ -25,4 +25,4 @@ function S() {
   );
 }
 
-export default S;
+export default App;
