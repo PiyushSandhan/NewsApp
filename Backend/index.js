@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import productRoute from './src/routes/protected.route.js';
+import userRoute from './src/routes/user.route.js';
 
 dotenv.config();//Load env variables from .env file
 const app = express();
@@ -14,7 +15,8 @@ app.use(express.urlencoded({extended: false}));
 
 
 // routes
-app.use("/api", productRoute);
+app.use("/api/v0", productRoute);
+app.use("/api/v0/user", userRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello from Node API Server Updated");

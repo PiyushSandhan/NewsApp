@@ -1,11 +1,9 @@
 import express from 'express';
 
 const router = express.Router();
-import UserController from '../user.controller.js';
-import { usernamePattern, phonePattern, passwordPattern } from '../../utils/regxPatterns.js';
 
-
-import { generateError } from '../../utils/errorHandler.js';
+import { usernamePattern, phonePattern, passwordPattern } from '../utils/regxPatterns.js';
+import { errorHandler } from '../utils/errorHandler.js';
 
 export const validateRegistration = (req, res, next) => {
     const { username, phoneNumber, password } = req.body;
@@ -24,13 +22,10 @@ export const validateRegistration = (req, res, next) => {
     }
 
     if (errors.length > 0) {
-        return generateError(res, 400, "Validation errors", errors);
+        return errorHandler(res, 400, "Validation errors", errors);
     }
 
     next();
 };
 
-
-
-router.post('/register', validateRegistration, UserController.register);
 export default router;
