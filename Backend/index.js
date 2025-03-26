@@ -1,9 +1,12 @@
-const express = require("express");
-const cors=require("cors");
-const mongoose = require("mongoose");
-const User = require("./models/user.model.js");
-const productRoute = require("./routes/user.route.js");
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import productRoute from './src/routes/protected.route.js';
+
+dotenv.config();//Load env variables from .env file
 const app = express();
+const PORT=process.env.PORT || 4000;
 app.use(cors());
 // middleware
 app.use(express.json());
@@ -17,16 +20,15 @@ app.get("/", (req, res) => {
   res.send("Hello from Node API Server Updated");
 });
 
-mongoose
-  .connect(
-    "mongodb+srv://sandhanpiyush20:Piyush%4020@cluster0.i9sqb.mongodb.net/Node-API?retryWrites=true&w=majority"
-  )
-  .then(() => {
-    console.log("Connected to database!");
-    app.listen(4000, () => {
-      console.log("Server is running on port 4000");
-    });
-  })
-  .catch(() => {
-    console.log("Connection failed!");
-  });
+const connectDB = async () => {
+  try {
+      await mongoose.connect(process.env.MONGO_URI);
+      console.log('✅ Connected to database!');
+      app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  } catch (error) {
+      console.error('❌ Database connection failed:', error);
+      process.exit(1); // Exit on database failure
+  }
+};
+
+connectDB();

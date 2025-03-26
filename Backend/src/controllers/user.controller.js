@@ -1,15 +1,15 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/user.model'); 
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/user.model.js';
 
 const UserController = {
     async register(req, res) {
         try {
             const { username, phoneNumber, password } = req.body;
-            if (!username || !phoneNumber || !password) {
-                return res.status(400).json({ message: 'Please enter all fields' });
+            if (!validateFields({ username, phoneNumber, password })) {
+                return errorHandler(res, 400, 'Please enter all fields');
             }
-
+            
             // Check if user already exists
             const existingUser = await User.findOne({ phoneNumber });
             if (existingUser) {
@@ -28,7 +28,11 @@ const UserController = {
 
             await newUser.save();
             
-            res.status(201).json({ message: 'User registered successfully' });
+            res.status(201).json({
+                success: true,
+                message: 'User registered successfully',
+                user: { id: newUser._id, username: newUser.username }
+            });
         } catch (err) {
             res.status(500).json({ message: 'Server error', error: err.message });
         }
@@ -54,8 +58,8 @@ const UserController = {
         }
 
         const token=jwt.sign(
-            {username: user.username },
-            'PIYUSHSANDHAN',
+            {id:user._id,username: user.username },
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         )
 
@@ -68,4 +72,4 @@ const UserController = {
     }
 };
 
-module.exports = UserController;
+export default UserController;
