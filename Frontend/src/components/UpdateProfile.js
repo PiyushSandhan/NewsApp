@@ -1,32 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../Style/Registration.css';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 
-function Registration() {
+function UpdateProfile() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    // Fetch user data on mount
+    useEffect(() => {
+        const userId = localStorage.getItem('id'); // Assuming 'userId' is the key used
+
+        if (userId) {
+            const fetchUserDetails = async () => {
+                try {
+                    const response = await fetch(`http://localhost:4000/api/v0/user/${userId}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user details');
+                    }
+                    const data = await response.json();
+                    setUsername(data.username);
+                    setPhoneNumber(data.phoneNumber);
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                    setErrorMessage('Failed to load user details.');
+                }
+            };
+    
+            fetchUserDetails();
+        } else {
+            setErrorMessage('User ID not found in local storage.');
+        }
+    }, []);
+    
+
     const validateForm = () => {
         let errorMessages = [];
 
-        // Regex patterns
-        const usernamePattern = /^[a-zA-Z0-9_]{3,}[a-zA-Z]+[0-9]*$/; // Alphanumeric with no spaces, min 3 chars
-        const phonePattern = /^\+?[1-9]\d{1,14}$/; // E.164 format
-        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // 6 to 20 chars, at least one numeric digit, one uppercase and one lowercase letter
+        const usernamePattern = /^[a-zA-Z0-9_]{3,}[a-zA-Z]+[0-9]*$/;
+        const phonePattern = /^\+?[1-9]\d{1,14}$/;
+        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
         if (!usernamePattern.test(username)) {
-            errorMessages.push("Username should be alphanumeric, start with a letter, and at least 3 characters long.");
+            errorMessages.push("Username should be alphanumeric, start with a letter, and be at least 3 characters long.");
         }
 
-        if (!phonePattern.test(phoneNumber) && errorMessages.length === 0) {
-            errorMessages.push("Phone number should match international E.164 format.");
+        if (!phonePattern.test(phoneNumber)) {
+            errorMessages.push("Phone number should match the international E.164 format.");
         }
 
-        if (!passwordPattern.test(password) && errorMessages.length === 0) {
+        if (password && !passwordPattern.test(password)) {
             errorMessages.push("Password must be 6-20 characters long, include at least one upper, one lower case letter, and one numeric digit.");
         }
 
@@ -37,38 +63,37 @@ function Registration() {
 
         setErrorMessage('');
         return true;
-    }
-
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-      
-
-        if (!validateForm()) return; // Stop submission if validation fails
+        if (!validateForm()) return;
 
         try {
-            const response = await fetch('http://localhost:4000/api/v0/user/register', {
-                method: 'POST',
+            const response = await fetch('http://localhost:4000/api/v0/user/update', {
+                method: 'PATCH',
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
+                    'id': localStorage.getItem('id'), // Assuming 'id' is the key used
                 },
                 body: JSON.stringify({
-                    username: username,
-                    phoneNumber: phoneNumber,
-                    password: password,
+                    username,
+                    phoneNumber,
+                    password
                 }),
             });
 
             if (!response.ok) {
                 const data = await response.json();
-            setErrorMessage(data.message || 'An error occurred during registration.');
-            return;
+                setErrorMessage(data.message || 'An error occurred while updating.');
+                return;
             }
 
-            navigate('/login');
+            navigate('/');  // Redirect to profile page after update
         } catch (error) {
             console.error('Error:', error);
-            errorMessage.push(error);
+            setErrorMessage('An error occurred while updating.');
         }
     };
 
@@ -81,7 +106,7 @@ function Registration() {
                 }}
             >
                 <Navbar />
-                <h2 className="Registration">Registration</h2>
+                <h2 className="Registration">Update Profile</h2>
                 <div
                     className="container"
                     id="RegistrationContainer"
@@ -105,7 +130,6 @@ function Registration() {
                                 placeholder="Enter username"
                                 required
                             />
-                           
                         </div>
 
                         <div className="Phone">
@@ -121,12 +145,11 @@ function Registration() {
                                 placeholder="Enter phone number"
                                 required
                             />
-                           
                         </div>
 
                         <div className="Password">
                             <label htmlFor="password" className="form-label">
-                                Password
+                                New Password (optional)
                             </label>
                             <input
                                 type="password"
@@ -134,18 +157,20 @@ function Registration() {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter password"
-                                required
+                                placeholder="Enter new password"
                             />
-                            <div className='container'>
-                             {errorMessage && <div className="alert alert-danger mt-4" style={{color:"red",fontSize:"13px", height: '50px',
-                        width: '94%',marginLeft: '2%'}}>{errorMessage}</div>}
-                       </div>
-                             
+                        </div>
+
+                        <div className='container'>
+                            {errorMessage && (
+                                <div className="alert alert-danger mt-4" style={{ color: "red", fontSize: "13px", height: '50px', width: '94%', marginLeft: '2%' }}>
+                                    {errorMessage}
+                                </div>
+                            )}
                         </div>
 
                         <button type="submit" className="btn btn-dark mx-auto" id="Button">
-                            Register
+                            Update
                         </button>
                     </form>
                 </div>
@@ -154,4 +179,4 @@ function Registration() {
     );
 }
 
-export default Registration;
+export default UpdateProfile;

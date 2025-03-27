@@ -6,5 +6,12 @@ import { validateRegistration } from '../middleware/authMiddleware.js';
 
 router.post('/register', validateRegistration, UserController.register);
 router.post('/login', UserController.login);
+router.get('/', UserController.getAllUsers);
+router.get('/:id',  UserController.getUserProfile);
+router.patch('/update', UserController.updateProfile);
+
+
+
+
 
 export default router;
