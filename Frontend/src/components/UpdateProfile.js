@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../Style/Registration.css';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function UpdateProfile() {
     const navigate = useNavigate();
@@ -12,12 +13,12 @@ function UpdateProfile() {
 
     // Fetch user data on mount
     useEffect(() => {
-        const userId = localStorage.getItem('id'); // Assuming 'userId' is the key used
+        const decode=jwtDecode(localStorage.getItem('token')); // Assuming 'userId' is the key used
 
-        if (userId) {
+        if (decode.id) {
             const fetchUserDetails = async () => {
                 try {
-                    const response = await fetch(`http://localhost:4000/api/v0/user/${userId}`);
+                    const response = await fetch(`http://localhost:4000/api/v0/user/${decode.id}`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch user details');
                     }
@@ -68,14 +69,14 @@ function UpdateProfile() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!validateForm()) return;
-
+        const decode=jwtDecode(localStorage.getItem('token'));
         try {
             const response = await fetch('http://localhost:4000/api/v0/user/update', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
-                    'id': localStorage.getItem('id'), // Assuming 'id' is the key used
+                    'id': decode.id, // Assuming 'id' is the key used
                 },
                 body: JSON.stringify({
                     username,

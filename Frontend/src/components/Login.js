@@ -55,7 +55,6 @@ function Login() {
         
       }
       localStorage.setItem('token', data.token);
-      localStorage.setItem('id', data.id);
       navigate('/');
     } catch (error) {
       console.error('Error:', error);
