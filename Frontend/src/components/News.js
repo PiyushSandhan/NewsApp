@@ -11,12 +11,16 @@ function News() {
 
   const fetchNews = async (page) => {
     setLoading(true);
-    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=6da0c8b4b5e14915a645f54ad5905ed0&page=${page}&pagesize=9`;
+    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=6da0c8b4b5e14915a645f54ad5905ed0&page=${page}&pagesize=10`;
     let data = await fetch(url);
     let parsedData = await data.json();
     setArticles(parsedData.articles);
     setTotalResults(parsedData.totalResults);
     setLoading(false);
+    console.log('Fetched Data:', parsedData.articles);
+console.log('Total Results:', parsedData.totalResults);
+console.log('Articles Count:', parsedData.articles.length);
+
   };
   
 
@@ -37,6 +41,7 @@ function News() {
     }
     setPage(page + 1);
   };
+  
 
   return (
     <>
@@ -46,14 +51,14 @@ function News() {
     <div className="container my-4"  >
       <h1 className="text-center" style={{fontFamily:"fantasy",fontSize:"30px"}}>Top Headlines</h1>
       <div className="row" style={{marginBottom:"4%",display:"flex",justifyContent:"space-between"}}>
-        {articles.map((element) => {
+        {articles.map((element,index) => {
           return (
-            <div className="col-md-4 " key={element.url} >
+            <div className="col-md-4 " key={index} >
               <NewsItem
-                title={element.title ? element.title : ""}
-                description={element.description ? element.description : ""}
-                imageUrl={element.urlToImage}
-                NewsUrl={element.url}
+                 title={element.title || "No Title Available"}
+                 description={element.description || "No Description Available"}
+                 imageUrl={element.urlToImage || "https://cdn4.iconfinder.com/data/icons/solid-part-6/128/image_icon-512.png"}
+                 NewsUrl={element.url || "#"}
               />
             </div>
           );
